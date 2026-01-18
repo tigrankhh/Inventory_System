@@ -1,4 +1,2 @@
-streamlit
-pandas
-python-barcode
-pillow
+flask
+firebase-admin
