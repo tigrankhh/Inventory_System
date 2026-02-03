@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import { supabase } from '@/lib/supabase';
+// Вместо import { supabase } from '@/lib/supabase'
+import { supabase } from '../lib/supabase'
 
 export default function UltimateInventory() {
   const [activeTab, setActiveTab] = useState<'scan' | 'staff'>('scan');
