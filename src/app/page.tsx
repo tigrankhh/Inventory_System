@@ -1,48 +1,46 @@
-'use client';
-import { useState } from 'react';
-import { supabase } from '@/libsupabase'
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import { supabase } from '@/libsupabase';
+import { QrCode, History, Settings, Package, User } from 'lucide-react';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
-    else router.push('/');
-  };
-
+export default function Dashboard() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">AssetOS Login</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-2 border rounded"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-2 border rounded"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-            Sign In
-          </button>
-        </form>
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-      </div>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Шапка */}
+      <header className="bg-blue-600 text-white p-4 shadow-lg">
+        <h1 className="text-xl font-bold">Inventory System</h1>
+      </header>
+
+      {/* Основной контент */}
+      <main className="flex-1 p-4 grid grid-cols-2 gap-4">
+        {/* Кнопка сканера */}
+        <button className="flex flex-col items-center justify-center bg-white p-6 rounded-2xl shadow-sm border-2 border-dashed border-blue-400 text-blue-600 hover:bg-blue-50 transition">
+          <QrCode size={48} />
+          <span className="mt-2 font-semibold">Scan QR</span>
+        </button>
+
+        {/* История */}
+        <button className="flex flex-col items-center justify-center bg-white p-6 rounded-2xl shadow-sm text-gray-700 hover:bg-gray-50 transition">
+          <History size={48} />
+          <span className="mt-2 font-semibold">History</span>
+        </button>
+
+        {/* Все гаджеты */}
+        <button className="flex flex-col items-center justify-center bg-white p-6 rounded-2xl shadow-sm text-gray-700 hover:bg-gray-50 transition">
+          <Package size={48} />
+          <span className="mt-2 font-semibold">Assets</span>
+        </button>
+
+        {/* Профиль */}
+        <button className="flex flex-col items-center justify-center bg-white p-6 rounded-2xl shadow-sm text-gray-700 hover:bg-gray-50 transition">
+          <User size={48} />
+          <span className="mt-2 font-semibold">Profile</span>
+        </button>
+      </main>
+
+      {/* Футер */}
+      <footer className="p-4 text-center text-gray-400 text-sm">
+        v1.0.0 Powered by Supabase
+      </footer>
     </div>
   );
 }
