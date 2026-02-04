@@ -1,20 +1,29 @@
 export const runtime = 'edge';
-iexport const runtime = 'edge';port { createClient } from '@/lib/supabaseServer'
+
+import { createClient } from '@/lib/supabaseServer'
 import { redirect } from 'next/navigation'
-import { Plus, Search, Filter, PackageOpen, Edit2, Trash2, QrCode } from 'lucide-react'
+import { Plus, Search, PackageOpen, Edit2, Trash2, QrCode } from 'lucide-react'
 import Link from 'next/link'
 
-export default async function InventoryPage({ searchParams }: { searchParams: { q?: string } }) {
-  const supabase = createClient()
+export default async function InventoryPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ q?: string }> 
+}) {
+  const params = await searchParams;
+  const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) redirect('/login')
 
-  // Запрос данных с фильтрацией (RLS автоматически отсечет чужие данные)
-  let query = supabase.from('inventory_items').select('*').order('created_at', { ascending: false })
+  // Запрос данных с фильтрацией
+  let query = supabase
+    .from('inventory_items')
+    .select('*')
+    .order('created_at', { ascending: false })
   
-  if (searchParams.q) {
-    query = query.ilike('name', `%${searchParams.q}%`)
+  if (params.q) {
+    query = query.ilike('name', `%${params.q}%`)
   }
 
   const { data: items } = await query
@@ -37,6 +46,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: { 
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input 
             name="q"
+            defaultValue={params.q}
             placeholder="Search assets..." 
             className="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
           />
