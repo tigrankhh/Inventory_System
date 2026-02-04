@@ -1,62 +1,28 @@
-'use client';
-import { useState } from 'react';
-import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation';
+'use client'
+import { createClient } from '@/lib/supabaseClient'
 
-export default function AuthPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
-  const router = useRouter();
+export default function LoginPage() {
+  const supabase = createClient()
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isRegistering) {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) alert(error.message);
-      else alert('Check your email for confirmation!');
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) alert(error.message);
-      else router.push('/'); // Уходим на главную после входа
-    }
-  };
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback` }
+    })
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
-        <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
-          {isRegistering ? 'Create Account' : 'Welcome Back'}
-        </h2>
-        <form onSubmit={handleAuth} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full rounded-lg border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full rounded-lg border p-3 outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button className="w-full rounded-lg bg-blue-600 p-3 font-semibold text-white hover:bg-blue-700 transition">
-            {isRegistering ? 'Sign Up' : 'Sign In'}
-          </button>
-        </form>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="w-full max-w-md p-8 bg-white rounded-3xl shadow-xl text-center">
+        <h1 className="text-3xl font-black mb-6 italic tracking-tight">INV.MANAGER</h1>
         <button 
-          onClick={() => setIsRegistering(!isRegistering)}
-          className="mt-4 w-full text-sm text-blue-600 hover:underline"
+          onClick={handleGoogleLogin}
+          className="flex w-full items-center justify-center gap-3 bg-white border border-slate-300 p-4 rounded-2xl font-bold hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
         >
-          {isRegistering ? 'Already have an account? Log in' : 'Need an account? Register'}
+          <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
+          Войти через Google
         </button>
       </div>
     </div>
-  );
+  )
 }
-
