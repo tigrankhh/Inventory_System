@@ -1,5 +1,6 @@
 export const runtime = 'edge';
 
+
 import { createClient } from '@/lib/supabaseServer'
 import { redirect } from 'next/navigation'
 import { Plus, Search, PackageOpen, Edit2, Trash2, QrCode } from 'lucide-react'
