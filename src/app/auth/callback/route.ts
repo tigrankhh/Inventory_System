@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { createClient } from '@/lib/supabaseServer'
 import { NextResponse } from 'next/server'
 
