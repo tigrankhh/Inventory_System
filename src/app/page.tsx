@@ -1,95 +1,81 @@
-export const runtime = 'edge';
+'use client'
 
+import { useEffect, useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
 
-import { createClient } from '@/lib/supabaseServer'
-import { redirect } from 'next/navigation'
-import { Plus, Search, PackageOpen, Edit2, Trash2, QrCode } from 'lucide-react'
-import Link from 'next/link'
+export default function HomePage() {
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const supabase = createClientComponentClient()
 
-export default async function InventoryPage({ 
-  searchParams 
-}: { 
-  searchParams: Promise<{ q?: string }> 
-}) {
-  const params = await searchParams;
-  const supabase = await createClient()
-  const { data: { session } } = await supabase.auth.getSession()
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error || !session) {
+        // Если юзер не залогинен — отправляем на логин
+        router.push('/login')
+      } else {
+        setUser(session.user)
+      }
+      setLoading(false)
+    }
 
-  if (!session) redirect('/login')
+    checkUser()
+  }, [router, supabase])
 
-  let query = supabase
-    .from('inventory_items')
-    .select('*')
-    .order('created_at', { ascending: false })
-  
-  if (params.q) {
-    query = query.ilike('name', `%${params.q}%`)
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
   }
 
-  const { data: items } = await query
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    )
+  }
 
   return (
-    <div className="max-w-7xl mx-auto p-8 min-h-screen bg-white">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-black italic tracking-tighter text-blue-600 uppercase">Inventory</h1>
-          <p className="text-slate-500 font-medium">Пользователь: {session.user.email}</p>
+    <div className="min-h-screen bg-slate-50">
+      {/* Навигация */}
+      <nav className="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+        <h1 className="text-xl font-black text-slate-900 uppercase tracking-tighter">
+          Inventory <span className="text-blue-600">Pro</span>
+        </h1>
+        <div className="flex items-center gap-4">
+          <span className="text-xs font-bold text-slate-500">{user?.email}</span>
+          <button 
+            onClick={handleSignOut}
+            className="bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all"
+          >
+            Exit
+          </button>
         </div>
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-lg shadow-blue-200">
-          <Plus size={20} /> ADD ITEM
-        </button>
-      </div>
+      </nav>
 
-      <div className="flex gap-4 mb-8 bg-slate-50 p-4 rounded-[2rem] border border-slate-100">
-        <form className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input 
-            name="q"
-            defaultValue={params.q}
-            placeholder="Search assets..." 
-            className="w-full bg-white border-none rounded-xl py-3 pl-12 pr-4 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
-          />
-        </form>
-      </div>
-
-      {!items || items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 border-4 border-dashed border-slate-100 rounded-[3rem]">
-          <PackageOpen size={64} className="text-slate-200 mb-4" />
-          <h2 className="text-xl font-bold text-slate-400 uppercase tracking-widest">No items found</h2>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {items.map((item) => (
-            <div key={item.id} className="group bg-white border border-slate-100 p-6 rounded-[2rem] flex items-center justify-between hover:shadow-2xl hover:shadow-blue-100 transition-all border-l-8 border-l-blue-600">
-              <div className="flex-1">
-                <h3 className="text-xl font-black text-slate-800 uppercase leading-none mb-2">{item.name}</h3>
-                <div className="flex gap-3 items-center">
-                  <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-tighter">
-                    {item.category}
-                  </span>
-                  <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase tracking-tighter 
-                    ${item.status === 'in stock' ? 'bg-green-100 text-green-600' : 
-                      item.status === 'low' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'}`}>
-                    {item.status}
-                  </span>
-                </div>
+      {/* Контент */}
+      <main className="p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-[2rem] p-10 shadow-sm border border-slate-100">
+            <h2 className="text-3xl font-black text-slate-900 mb-2">Welcome Back! 📦</h2>
+            <p className="text-slate-500 font-medium">Your inventory system is ready to work.</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+              <div className="p-6 bg-blue-50 rounded-3xl border border-blue-100">
+                <p className="text-blue-600 font-black text-2xl">0</p>
+                <p className="text-blue-400 text-[10px] font-bold uppercase uppercase tracking-widest">Products</p>
               </div>
-              
-              <div className="flex gap-2">
-                <Link href={`/inventory/${item.id}/qr`} className="p-3 bg-slate-50 rounded-xl hover:bg-blue-600 hover:text-white transition-all">
-                  <QrCode size={20} />
-                </Link>
-                <button className="p-3 bg-slate-50 rounded-xl hover:bg-slate-900 hover:text-white transition-all">
-                  <Edit2 size={20} />
-                </button>
-                <button className="p-3 bg-slate-50 rounded-xl hover:bg-red-500 hover:text-white transition-all">
-                  <Trash2 size={20} />
-                </button>
+              <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-slate-300 italic">
+                <p className="text-sm font-bold">Coming Soon...</p>
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      )}
+      </main>
     </div>
   )
 }
