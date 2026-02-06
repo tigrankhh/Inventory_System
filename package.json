@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "pages:build": "npx @cloudflare/next-on-pages --experimental-minify"
+  "pages:build": "npx @cloudflare/next-on-pages && ls -a .vercel/output"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
