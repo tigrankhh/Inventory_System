@@ -4,5 +4,5 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output"
 
 [vars]
-NEXT_PUBLIC_SUPABASE_URL = "твой_url"
-NEXT_PUBLIC_SUPABASE_ANON_KEY = "твой_ключ"
+NEXT_PUBLIC_SUPABASE_URL = "https://bogdoudmiaijxjvvkgfx.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvZ2RvdWRtaWFpanhqdnZrZ2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5NzUwNjQsImV4cCI6MjA4NTU1MTA2NH0.hQADbA8Xrd9qBOVcwOq1YwFZR7bd7BxdhxOaP9-YGYE"
