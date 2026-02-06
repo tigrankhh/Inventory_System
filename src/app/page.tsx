@@ -1,5 +1,5 @@
 export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Это заставит Cloudflare создать воркер!
 
 import { createClient } from '@/lib/supabaseServer';
 import { Suspense } from 'react';
