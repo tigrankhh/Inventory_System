@@ -1,11 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
-  images: { unoptimized: true },
-  // Это важно для Cloudflare!
-  distDir: '.next', 
+  // ⚠️ Важно: Cloudflare не поддерживает стандартную оптимизацию картинок Next.js без доп. настроек
+  images: {
+    unoptimized: true,
+  },
+  // Убедись, что нет лишних редиректов или basePath, которые могут давать 404
 };
 
 export default nextConfig;
