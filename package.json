@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-"pages:build": "npx @cloudflare/next-on-pages --experimental-minify --compatibility-flag=nodejs_compat"
+"pages:build": "npx @cloudflare/next-on-pages --experimental-minify"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
