@@ -1,4 +1,4 @@
-name = "inventory-app"
+name = "inventory-app-egm"
 pages_build_output_dir = ".vercel/output"
 compatibility_date = "2024-11-01"
-compatibility_flags = [ "nodejs_compat" ]
+compatibility_flags = ["nodejs_compat"]
