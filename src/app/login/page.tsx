@@ -1,126 +1,87 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
-import { useRouter } from 'next/navigation'
+import { createBrowserClient } from '@supabase/ssr';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isRegistering, setIsRegistering] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  
-  const router = useRouter()
-  const supabase = createClientComponentClient()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+  // Инициализируем клиент Supabase внутри компонента
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
-    try {
-      if (isRegistering) {
-        // Регистрация
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
-        })
-        if (signUpError) throw signUpError
-        alert('Успешно! Если подтверждение почты включено — проверьте email. Если нет — можно входить.')
-        setIsRegistering(false)
-      } else {
-        // Вход
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (signInError) throw signInError
-        
-        router.refresh()
-        router.push('/')
-      }
-    } catch (err: any) {
-      setError(err.message || 'Ошибка авторизации')
-    } finally {
-      setLoading(false)
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      router.push('/dashboard');
+      router.refresh();
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 text-slate-900">
-      <div className="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border-4 border-blue-500">
-        
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-black uppercase tracking-tighter">
-            Inventory <span className="text-blue-600">Pure</span>
-          </h1>
-          <p className="text-slate-400 text-[10px] font-bold uppercase mt-2 tracking-[0.2em]">
-            {isRegistering ? 'Создать аккаунт' : 'Авторизация'}
-          </p>
-        </div>
-
-        <form onSubmit={handleAuth} className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400 ml-4">Email</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 outline-none focus:border-blue-600 focus:bg-white transition-all font-bold"
-              placeholder="boss@inventory.com"
-              required
-            />
-          </div>
-          
-          <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase text-slate-400 ml-4">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 px-6 outline-none focus:border-blue-600 focus:bg-white transition-all font-bold"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-
+    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-10 shadow-md">
+        <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
+          Вход в систему
+        </h2>
+        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           {error && (
-            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-xs font-bold border border-red-100 italic">
-              ✕ {error}
+            <div className="rounded bg-red-50 p-4 text-sm text-red-500">
+              {error}
             </div>
           )}
+          <div className="space-y-4 rounded-md shadow-sm">
+            <div>
+              <input
+                type="email"
+                required
+                className="relative block w-full rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                required
+                className="relative block w-full rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl active:scale-95 disabled:opacity-50"
-          >
-            {loading ? 'Секунду...' : isRegistering ? 'Зарегистрироваться' : 'Войти в систему'}
-          </button>
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            >
+              {loading ? 'Вход...' : 'Войти'}
+            </button>
+          </div>
         </form>
-
-        <div className="mt-8 text-center border-t border-slate-50 pt-6">
-          <button 
-            onClick={() => {
-              setIsRegistering(!isRegistering)
-              setError(null)
-            }}
-            className="text-slate-400 font-bold uppercase text-[10px] tracking-widest hover:text-blue-600 transition-all"
-          >
-            {isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Регистрация'}
-          </button>
-        </div>
-
-        {/* Маркер обновления — удали его потом */}
-        <div className="mt-4 text-center">
-          <span className="text-[8px] text-slate-200 font-mono uppercase">Version: No-Google-Hotfix</span>
-        </div>
       </div>
     </div>
-  )
+  );
 }
-
