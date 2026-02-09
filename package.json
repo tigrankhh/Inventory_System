@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pages:build": "mkdir -p .vercel/output && npx @cloudflare/next-on-pages --outdir .vercel/output"
+    "pages:build": "npx @cloudflare/next-on-pages"
   },
   "dependencies": {
     "@supabase/ssr": "latest",
