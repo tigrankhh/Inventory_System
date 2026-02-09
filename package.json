@@ -5,29 +5,28 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-"pages:build": "npx @cloudflare/next-on-pages --outdir .vercel/output",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pages:build": "mkdir -p .vercel/output && npx @cloudflare/next-on-pages --outdir .vercel/output"
   },
   "dependencies": {
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "lucide-react": "^0.474.0",
     "next": "15.1.4",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "lucide-react": "latest",
-    "clsx": "latest",
-    "tailwind-merge": "latest"
+    "qrcode.react": "^4.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.15.1"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "latest",
-    "@tailwindcss/postcss": "latest",
-    "@types/node": "20.x",
-    "@types/react": "19.x",
-    "@types/react-dom": "19.x",
-    "postcss": "8.x",
-    "tailwindcss": "3.x",
-    "typescript": "5.x",
-    "wrangler": "latest"
+    "@cloudflare/next-on-pages": "1.13.16",
+    "@types/node": "^20.17.16",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vercel": "47.0.4"
   }
 }
