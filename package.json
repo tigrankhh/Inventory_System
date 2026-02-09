@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pages:build": "npx @cloudflare/next-on-pages --experimental-minify && echo '--- DEBUG: STRUCTURE OF OUTPUT ---' && ls -R .vercel/output"
+    "pages:build": "npx @cloudflare/next-on-pages --experimental-minify && echo '--- DEBUG: ROUTES CONFIG ---' && cat .vercel/output/config.json && echo '--- DEBUG: STATIC ASSETS ---' && ls -R .vercel/output/static"
   },
   "dependencies": {
     "@supabase/ssr": "latest",
